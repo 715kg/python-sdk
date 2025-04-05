@@ -1,3 +1,8 @@
+[![PyPI version](https://badge.fury.io/py/gosms-ru-client.svg)](https://badge.fury.io/py/gosms-ru-client)
+[![Python versions](https://img.shields.io/pypi/pyversions/gosms-ru-client.svg)](https://pypi.org/project/gosms-ru-client/)
+[![Downloads](https://static.pepy.tech/badge/gosms-ru-client)](https://pepy.tech/project/gosms-ru-client)
+[![License](https://img.shields.io/pypi/l/gosms-ru-client.svg)](https://github.com/Gosms-ru/python-sdk/blob/master/LICENSE)
+
 # GoSMS Python SDK
 🐍 Python SDK for GoSMS.ru API – A lightweight and efficient library for interacting with the GoSMS.ru SMS 
 gateway. Send SMS, check balances, track delivery statuses, and manage contacts with ease.
