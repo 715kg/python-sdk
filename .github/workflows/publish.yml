@@ -31,17 +31,16 @@ jobs:
           fi
       
       - name: Update version in pyproject.toml and __init__.py
-        env:
-          VERSION: ${{ github.ref_name }}
         run: |
-          # Выводим версию для отладки
+          # Получаем версию из тега (убираем 'v' из начала)
+          VERSION=${GITHUB_REF#refs/tags/v}
           echo "Updating to version: ${VERSION}"
           
           # Обновляем версию в pyproject.toml
-          python -c "import toml, os; version = '${VERSION}'; config = toml.load('pyproject.toml'); config['project']['version'] = version; toml.dump(config, open('pyproject.toml', 'w')); print(f'Updated pyproject.toml to version {version}')"
+          python -c "import toml; version = '${VERSION}'; config = toml.load('pyproject.toml'); config['project']['version'] = version; toml.dump(config, open('pyproject.toml', 'w')); print(f'Updated pyproject.toml to version {version}')"
           
           # Обновляем версию в __init__.py
-          python -c "import re, os; version = '${VERSION}'; content = open('gosms_ru_client/__init__.py', 'r').read(); content = re.sub(r'__version__ = \"[^\"]*\"', f'__version__ = \"{version}\"', content); open('gosms_ru_client/__init__.py', 'w').write(content); print(f'Updated __init__.py to version {version}')"
+          python -c "import re; version = '${VERSION}'; content = open('gosms_ru_client/__init__.py', 'r').read(); content = re.sub(r'__version__ = \"[^\"]*\"', f'__version__ = \"{version}\"', content); open('gosms_ru_client/__init__.py', 'w').write(content); print(f'Updated __init__.py to version {version}')"
       
       - name: Build package
         run: python -m build
