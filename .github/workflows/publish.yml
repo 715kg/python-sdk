@@ -2,8 +2,8 @@ name: Publish to PyPI
 
 on:
   push:
-    tags:
-      - 'v*'  # Запускать при пуше тегов, начинающихся с 'v'
+    branches:
+      - master  # Запускать при пуше в ветку master
 
 jobs:
   publish:
@@ -19,28 +19,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine toml requests
+          pip install build twine
+      
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          VERSION=$(python -c "import toml; print(toml.load('pyproject.toml')['project']['version'])")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       
       - name: Check if version exists
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          VERSION=${{ steps.get_version.outputs.version }}
           # Проверяем существование версии через PyPI API
           if curl -s "https://pypi.org/pypi/gosms-ru-client/${VERSION}/json" | grep -q "version"; then
             echo "Version ${VERSION} already exists on PyPI. Please use a different version."
             exit 1
           fi
-      
-      - name: Update version in pyproject.toml and __init__.py
-        run: |
-          # Получаем версию из тега (убираем 'v' из начала)
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "Updating to version: ${VERSION}"
-          
-          # Обновляем версию в pyproject.toml
-          python -c "import toml; version = '${VERSION}'; config = toml.load('pyproject.toml'); config['project']['version'] = version; toml.dump(config, open('pyproject.toml', 'w')); print(f'Updated pyproject.toml to version {version}')"
-          
-          # Обновляем версию в __init__.py
-          python -c "import re; version = '${VERSION}'; content = open('gosms_ru_client/__init__.py', 'r').read(); content = re.sub(r'__version__ = \"[^\"]*\"', f'__version__ = \"{version}\"', content); open('gosms_ru_client/__init__.py', 'w').write(content); print(f'Updated __init__.py to version {version}')"
       
       - name: Build package
         run: python -m build
