@@ -8,5 +8,5 @@ GoSMS Python SDK
 from .client import GoSMSClient
 from .exceptions import GoSMSError
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 __all__ = ["GoSMSClient", "GoSMSError"] 
